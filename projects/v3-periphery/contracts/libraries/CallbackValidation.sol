@@ -25,11 +25,10 @@ library CallbackValidation {
     /// @param deployer The contract address of the PancakeSwap V3 deployer
     /// @param poolKey The identifying key of the V3 pool
     /// @return pool The V3 pool contract address
-    function verifyCallback(address deployer, PoolAddress.PoolKey memory poolKey)
-        internal
-        view
-        returns (IPancakeV3Pool pool)
-    {
+    function verifyCallback(
+        address deployer,
+        PoolAddress.PoolKey memory poolKey
+    ) internal view returns (IPancakeV3Pool pool) {
         pool = IPancakeV3Pool(PoolAddress.computeAddress(deployer, poolKey));
         require(msg.sender == address(pool));
     }

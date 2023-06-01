@@ -7,14 +7,15 @@ async function main() {
   console.log('owner', owner.address)
 
   const network = await ethers.provider.getNetwork()
+  const currentNonfungibleTokenPositionDescriptor = '0x99CA5A05948468da7218768250afE637bFc0Bd9c'
 
   const NonfungibleTokenPositionDescriptorV2 = await ethers.getContractFactoryFromArtifact(
     NftDescriptorOffchainV2Artifact
   )
-  const baseTokenUri = `https://nft.pancakeswap.com/v3/${network.chainId}/`
+  const baseTokenUri = `https://nft.berasleep.com/v3/${network.chainId}/`
   console.log(baseTokenUri)
   const nonfungibleTokenPositionDescriptor = await upgrades.upgradeProxy(
-    process.env.NFT_DESC_OFFCHAIN_ADDRESS!,
+    currentNonfungibleTokenPositionDescriptor,
     NonfungibleTokenPositionDescriptorV2,
     {
       call: {

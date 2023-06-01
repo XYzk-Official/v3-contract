@@ -22,11 +22,7 @@ abstract contract LiquidityManagement is IPancakeV3MintCallback, PeripheryImmuta
     }
 
     /// @inheritdoc IPancakeV3MintCallback
-    function pancakeV3MintCallback(
-        uint256 amount0Owed,
-        uint256 amount1Owed,
-        bytes calldata data
-    ) external override {
+    function pancakeV3MintCallback(uint256 amount0Owed, uint256 amount1Owed, bytes calldata data) external override {
         MintCallbackData memory decoded = abi.decode(data, (MintCallbackData));
         CallbackValidation.verifyCallback(deployer, decoded.poolKey);
 
@@ -48,17 +44,14 @@ abstract contract LiquidityManagement is IPancakeV3MintCallback, PeripheryImmuta
     }
 
     /// @notice Add liquidity to an initialized pool
-    function addLiquidity(AddLiquidityParams memory params)
-        internal
-        returns (
-            uint128 liquidity,
-            uint256 amount0,
-            uint256 amount1,
-            IPancakeV3Pool pool
-        )
-    {
-        PoolAddress.PoolKey memory poolKey =
-            PoolAddress.PoolKey({token0: params.token0, token1: params.token1, fee: params.fee});
+    function addLiquidity(
+        AddLiquidityParams memory params
+    ) internal returns (uint128 liquidity, uint256 amount0, uint256 amount1, IPancakeV3Pool pool) {
+        PoolAddress.PoolKey memory poolKey = PoolAddress.PoolKey({
+            token0: params.token0,
+            token1: params.token1,
+            fee: params.fee
+        });
 
         pool = IPancakeV3Pool(PoolAddress.computeAddress(deployer, poolKey));
 

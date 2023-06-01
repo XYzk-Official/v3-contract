@@ -1,21 +1,15 @@
 {
-  "name": "@pancakeswap/masterchef-v3",
+  "name": "@berasleep/masterchef-v3",
   "version": "1.0.0",
-  "description": "Pancake MasterChef V3",
+  "description": "BeraSleep MasterChef V3",
   "publishConfig": {
     "access": "public"
   },
-  "author": "PancakeSwap",
+  "author": "BeraSleep",
   "license": "MIT",
   "keywords": [
-    "pancakeswap",
     "masterchef",
     "v3"
-  ],
-  "files": [
-    "contracts",
-    "artifacts/contracts/**/*.json",
-    "!artifacts/contracts/**/*.dbg.json"
   ],
   "scripts": {
     "format:check": "prettier --check './**/*.{js,ts,sol}'",
@@ -37,9 +31,9 @@
     "@openzeppelin/test-helpers": "^0.5.11",
     "@pancakeswap/eslint-config-pancake": "^1.2.0",
     "@pancakeswap/pancake-swap-lib": "0.0.4",
-    "@pancakeswap/v3-core": "*",
-    "@pancakeswap/v3-lm-pool": "*",
-    "@pancakeswap/v3-periphery": "*",
+    "@berasleep/v3-core": "*",
+    "@berasleep/v3-lm-pool": "*",
+    "@berasleep/v3-periphery": "*",
     "@types/chai": "^4.2.21",
     "@types/mocha": "^8.2.2",
     "@types/node": "^14.14.35",

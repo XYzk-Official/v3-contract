@@ -1,0 +1,110 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x793c9e9897092BCe79eAe577cc823D4B32bf3141",
+    "txHash": "0x5a2ab4afe77da4da74c5bc04bbdb77c8bb18756b9c1fea8cc7638a3d0748120f"
+  },
+  "proxies": [
+    {
+      "address": "0x99CA5A05948468da7218768250afE637bFc0Bd9c",
+      "txHash": "0xa85608a69acaac71d3b8ad9811d0874b48505d824efacaa60cefa1de2ade71ed",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "2a88f0a49a9c25b1c479a31be14897cf1d01115d45ba4287ded3734b5bb356e7": {
+      "address": "0x4F702dC977A4182A632d3Bef357205813a7570dd",
+      "txHash": "0xb5114e9142be4a8c260382f51c84327a626f7cb2402da0a1854d5d4e05ea3823",
+      "layout": {
+        "solcVersion": "0.7.6",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:25"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:30"
+          },
+          {
+            "label": "_baseTokenURI",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage",
+            "contract": "NonfungibleTokenPositionDescriptorOffChain",
+            "src": "contracts/NonfungibleTokenPositionDescriptorOffChain.sol:14"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    },
+    "3cdccaa8e15812e1580ea531eec8cac52fa21f53405a3eb5272c0a8c12787c84": {
+      "address": "0x9De5fB5A88e51236F71BE170FD736a56E1899816",
+      "txHash": "0x28c367db8b68b03b99982b0cd9a697f1332853a5ffd0dd45736efc2741f64d88",
+      "layout": {
+        "solcVersion": "0.7.6",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:25"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol:30"
+          },
+          {
+            "label": "_baseTokenURI",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage",
+            "contract": "NonfungibleTokenPositionDescriptorOffChainV2",
+            "src": "contracts/NonfungibleTokenPositionDescriptorOffChainV2.sol:14"
+          },
+          {
+            "label": "_initializedV2",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_bool",
+            "contract": "NonfungibleTokenPositionDescriptorOffChainV2",
+            "src": "contracts/NonfungibleTokenPositionDescriptorOffChainV2.sol:19"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    }
+  }
+}

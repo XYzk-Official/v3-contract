@@ -3,7 +3,7 @@ import '@nomicfoundation/hardhat-toolbox'
 import '@typechain/hardhat'
 import 'dotenv/config'
 import { NetworkUserConfig } from 'hardhat/types'
-import 'solidity-docgen';
+import 'solidity-docgen'
 require('dotenv').config({ path: require('find-config')('.env') })
 
 const bscTestnet: NetworkUserConfig = {

@@ -11,7 +11,7 @@ library SafeCast {
     }
 
     function toInt256(uint256 y) internal pure returns (int256 z) {
-        require(y < 2**255);
+        require(y < 2 ** 255);
         z = int256(y);
     }
 }

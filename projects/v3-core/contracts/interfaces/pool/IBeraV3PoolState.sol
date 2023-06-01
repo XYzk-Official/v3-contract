@@ -21,9 +21,11 @@ interface IBeraV3PoolState {
 
     function protocolFees() external view returns (uint128 token0, uint128 token1);
 
-   
     function liquidity() external view returns (uint128);
-    function ticks(int24 tick)
+
+    function ticks(
+        int24 tick
+    )
         external
         view
         returns (
@@ -47,7 +49,9 @@ interface IBeraV3PoolState {
     /// Returns feeGrowthInside1LastX128 fee growth of token1 inside the tick range as of the last mint/burn/poke,
     /// Returns tokensOwed0 the computed amount of token0 owed to the position as of the last mint/burn/poke,
     /// Returns tokensOwed1 the computed amount of token1 owed to the position as of the last mint/burn/poke
-    function positions(bytes32 key)
+    function positions(
+        bytes32 key
+    )
         external
         view
         returns (
@@ -66,7 +70,9 @@ interface IBeraV3PoolState {
     /// Returns tickCumulative the tick multiplied by seconds elapsed for the life of the pool as of the observation timestamp,
     /// Returns secondsPerLiquidityCumulativeX128 the seconds per in range liquidity for the life of the pool as of the observation timestamp,
     /// Returns initialized whether the observation has been initialized and the values are safe to use
-    function observations(uint256 index)
+    function observations(
+        uint256 index
+    )
         external
         view
         returns (

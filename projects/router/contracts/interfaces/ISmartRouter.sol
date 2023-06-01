@@ -11,6 +11,13 @@ import './IApproveAndCall.sol';
 import './IMulticallExtended.sol';
 
 /// @title Router token swapping functionality
-interface ISmartRouter is IV2SwapRouter, IV3SwapRouter, IStableSwapRouter, IApproveAndCall, IMulticallExtended, ISelfPermit {
+interface ISmartRouter is
+    IV2SwapRouter,
+    IV3SwapRouter,
+    IStableSwapRouter,
+    IApproveAndCall,
+    IMulticallExtended,
+    ISelfPermit
+{
 
 }

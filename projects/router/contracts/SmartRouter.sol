@@ -13,7 +13,15 @@ import './base/ApproveAndCall.sol';
 import './base/MulticallExtended.sol';
 
 /// @title Pancake Smart Router
-contract SmartRouter is ISmartRouter, V2SwapRouter, V3SwapRouter, StableSwapRouter, ApproveAndCall, MulticallExtended, SelfPermit {
+contract SmartRouter is
+    ISmartRouter,
+    V2SwapRouter,
+    V3SwapRouter,
+    StableSwapRouter,
+    ApproveAndCall,
+    MulticallExtended,
+    SelfPermit
+{
     constructor(
         address _factoryV2,
         address _deployer,
@@ -22,5 +30,9 @@ contract SmartRouter is ISmartRouter, V2SwapRouter, V3SwapRouter, StableSwapRout
         address _stableFactory,
         address _stableInfo,
         address _WETH9
-    ) ImmutableState(_factoryV2, _positionManager) PeripheryImmutableState(_deployer, _factoryV3, _WETH9) StableSwapRouter(_stableFactory, _stableInfo) {}
+    )
+        ImmutableState(_factoryV2, _positionManager)
+        PeripheryImmutableState(_deployer, _factoryV3, _WETH9)
+        StableSwapRouter(_stableFactory, _stableInfo)
+    {}
 }

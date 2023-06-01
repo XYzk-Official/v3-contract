@@ -2,9 +2,5 @@
 pragma solidity >=0.5.0;
 
 interface IBeraV3FlashCallback {
-    function beraV3FlashCallback(
-        uint256 fee0,
-        uint256 fee1,
-        bytes calldata data
-    ) external;
+    function beraV3FlashCallback(uint256 fee0, uint256 fee1, bytes calldata data) external;
 }

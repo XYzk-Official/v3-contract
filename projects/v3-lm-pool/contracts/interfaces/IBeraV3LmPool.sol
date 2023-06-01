@@ -2,7 +2,7 @@
 pragma solidity >=0.5.0;
 
 interface IBeraV3LmPool {
-  function accumulateReward(uint32 currTimestamp) external;
+    function accumulateReward(uint32 currTimestamp) external;
 
-  function crossLmTick(int24 tick, bool zeroForOne) external;
+    function crossLmTick(int24 tick, bool zeroForOne) external;
 }

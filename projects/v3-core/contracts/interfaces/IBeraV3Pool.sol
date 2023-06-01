@@ -15,6 +15,4 @@ interface IBeraV3Pool is
     IBeraV3PoolActions,
     IBeraV3PoolOwnerActions,
     IBeraV3PoolEvents
-{
-
-}
+{}

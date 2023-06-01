@@ -44,11 +44,7 @@ contract PairFlash is IPancakeV3FlashCallback, PeripheryPayments {
     /// @param data The data needed in the callback passed as FlashCallbackData from `initFlash`
     /// @notice implements the callback called from flash
     /// @dev fails if the flash is not profitable, meaning the amountOut from the flash is less than the amount borrowed
-    function pancakeV3FlashCallback(
-        uint256 fee0,
-        uint256 fee1,
-        bytes calldata data
-    ) external override {
+    function pancakeV3FlashCallback(uint256 fee0, uint256 fee1, bytes calldata data) external override {
         FlashCallbackData memory decoded = abi.decode(data, (FlashCallbackData));
         CallbackValidation.verifyCallback(deployer, decoded.poolKey);
 
@@ -62,35 +58,33 @@ contract PairFlash is IPancakeV3FlashCallback, PeripheryPayments {
 
         // call exactInputSingle for swapping token1 for token0 in pool with fee2
         TransferHelper.safeApprove(token1, address(swapRouter), decoded.amount1);
-        uint256 amountOut0 =
-            swapRouter.exactInputSingle(
-                ISwapRouter.ExactInputSingleParams({
-                    tokenIn: token1,
-                    tokenOut: token0,
-                    fee: decoded.poolFee2,
-                    recipient: address(this),
-                    deadline: block.timestamp,
-                    amountIn: decoded.amount1,
-                    amountOutMinimum: amount0Min,
-                    sqrtPriceLimitX96: 0
-                })
-            );
+        uint256 amountOut0 = swapRouter.exactInputSingle(
+            ISwapRouter.ExactInputSingleParams({
+                tokenIn: token1,
+                tokenOut: token0,
+                fee: decoded.poolFee2,
+                recipient: address(this),
+                deadline: block.timestamp,
+                amountIn: decoded.amount1,
+                amountOutMinimum: amount0Min,
+                sqrtPriceLimitX96: 0
+            })
+        );
 
         // call exactInputSingle for swapping token0 for token 1 in pool with fee3
         TransferHelper.safeApprove(token0, address(swapRouter), decoded.amount0);
-        uint256 amountOut1 =
-            swapRouter.exactInputSingle(
-                ISwapRouter.ExactInputSingleParams({
-                    tokenIn: token0,
-                    tokenOut: token1,
-                    fee: decoded.poolFee3,
-                    recipient: address(this),
-                    deadline: block.timestamp,
-                    amountIn: decoded.amount0,
-                    amountOutMinimum: amount1Min,
-                    sqrtPriceLimitX96: 0
-                })
-            );
+        uint256 amountOut1 = swapRouter.exactInputSingle(
+            ISwapRouter.ExactInputSingleParams({
+                tokenIn: token0,
+                tokenOut: token1,
+                fee: decoded.poolFee3,
+                recipient: address(this),
+                deadline: block.timestamp,
+                amountIn: decoded.amount0,
+                amountOutMinimum: amount1Min,
+                sqrtPriceLimitX96: 0
+            })
+        );
 
         // pay the required amounts back to the pair
         if (amount0Min > 0) pay(token0, address(this), msg.sender, amount0Min);
@@ -123,8 +117,11 @@ contract PairFlash is IPancakeV3FlashCallback, PeripheryPayments {
     /// @param params The parameters necessary for flash and the callback, passed in as FlashParams
     /// @notice Calls the pools flash function with data needed in `PancakeV3FlashCallback`
     function initFlash(FlashParams memory params) external {
-        PoolAddress.PoolKey memory poolKey =
-            PoolAddress.PoolKey({token0: params.token0, token1: params.token1, fee: params.fee1});
+        PoolAddress.PoolKey memory poolKey = PoolAddress.PoolKey({
+            token0: params.token0,
+            token1: params.token1,
+            fee: params.fee1
+        });
         IPancakeV3Pool pool = IPancakeV3Pool(PoolAddress.computeAddress(deployer, poolKey));
         // recipient of borrowed amounts
         // amount of token0 requested to borrow

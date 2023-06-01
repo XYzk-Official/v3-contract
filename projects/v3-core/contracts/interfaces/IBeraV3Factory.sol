@@ -35,17 +35,9 @@ interface IBeraV3Factory {
 
     function feeAmountTickSpacingExtraInfo(uint24 fee) external view returns (bool whitelistRequested, bool enabled);
 
-    function getPool(
-        address tokenA,
-        address tokenB,
-        uint24 fee
-    ) external view returns (address pool);
+    function getPool(address tokenA, address tokenB, uint24 fee) external view returns (address pool);
 
-    function createPool(
-        address tokenA,
-        address tokenB,
-        uint24 fee
-    ) external returns (address pool);
+    function createPool(address tokenA, address tokenB, uint24 fee) external returns (address pool);
 
     function setOwner(address _owner) external;
 
@@ -53,11 +45,7 @@ interface IBeraV3Factory {
 
     function setWhiteListAddress(address user, bool verified) external;
 
-    function setFeeAmountExtraInfo(
-        uint24 fee,
-        bool whitelistRequested,
-        bool enabled
-    ) external;
+    function setFeeAmountExtraInfo(uint24 fee, bool whitelistRequested, bool enabled) external;
 
     function setLmPoolDeployer(address _lmPoolDeployer) external;
 

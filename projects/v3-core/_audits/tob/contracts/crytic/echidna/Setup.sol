@@ -42,11 +42,7 @@ contract SetupTokens {
     }
 
     // mint either token0 or token1 to a chosen account
-    function mintTo(
-        uint256 _tokenIdx,
-        address _recipient,
-        uint256 _amount
-    ) public {
+    function mintTo(uint256 _tokenIdx, address _recipient, uint256 _amount) public {
         require(_tokenIdx == 0 || _tokenIdx == 1, 'invalid token idx');
         if (_tokenIdx == 0) tokenSetup0.mintTo(_recipient, _amount);
         if (_tokenIdx == 1) tokenSetup1.mintTo(_recipient, _amount);
@@ -98,25 +94,15 @@ contract UniswapMinter {
         pool = _pool;
     }
 
-    function PancakeV3MintCallback(
-        uint256 amount0Owed,
-        uint256 amount1Owed,
-        bytes calldata data
-    ) external {
+    function PancakeV3MintCallback(uint256 amount0Owed, uint256 amount1Owed, bytes calldata data) external {
         if (amount0Owed > 0) token0.transfer(address(pool), amount0Owed);
         if (amount1Owed > 0) token1.transfer(address(pool), amount1Owed);
     }
 
-    function getTickLiquidityVars(int24 _tickLower, int24 _tickUpper)
-        internal
-        view
-        returns (
-            uint128,
-            int128,
-            uint128,
-            int128
-        )
-    {
+    function getTickLiquidityVars(
+        int24 _tickLower,
+        int24 _tickUpper
+    ) internal view returns (uint128, int128, uint128, int128) {
         (uint128 tL_liqGross, int128 tL_liqNet, , ) = pool.ticks(_tickLower);
         (uint128 tU_liqGross, int128 tU_liqNet, , ) = pool.ticks(_tickUpper);
         return (tL_liqGross, tL_liqNet, tU_liqGross, tU_liqNet);
@@ -171,11 +157,7 @@ contract UniswapSwapper {
         pool = _pool;
     }
 
-    function PancakeV3SwapCallback(
-        int256 amount0Delta,
-        int256 amount1Delta,
-        bytes calldata data
-    ) external {
+    function PancakeV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes calldata data) external {
         if (amount0Delta > 0) token0.transfer(address(pool), uint256(amount0Delta));
         if (amount1Delta > 0) token1.transfer(address(pool), uint256(amount1Delta));
     }

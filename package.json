@@ -8,10 +8,13 @@
   ],
   "scripts": {
     "compile": "yarn workspaces run compile",
-    "test": "yarn workspaces run test"
+    "test": "yarn workspaces run test",
+    "format:write": "prettier --write 'projects/**/*.{js,ts,sol}'"
   },
   "devDependencies": {
     "zx": "^7.2.0",
+    "prettier": "^2.3.2",
+    "prettier-plugin-solidity": "^1.0.0-beta.17",
     "@typechain/hardhat": "^6.1.5",
     "solidity-docgen": "^0.6.0-beta.35",
     "find-config": "^1.0.0"

@@ -18,12 +18,10 @@ contract NonfungibleTokenPositionDescriptorOffChain is INonfungibleTokenPosition
     }
 
     /// @inheritdoc INonfungibleTokenPositionDescriptor
-    function tokenURI(INonfungiblePositionManager positionManager, uint256 tokenId)
-        external
-        view
-        override
-        returns (string memory)
-    {
-        return bytes(_baseTokenURI).length > 0 ? string(abi.encodePacked(_baseTokenURI, tokenId.toString())) : "";
+    function tokenURI(
+        INonfungiblePositionManager positionManager,
+        uint256 tokenId
+    ) external view override returns (string memory) {
+        return bytes(_baseTokenURI).length > 0 ? string(abi.encodePacked(_baseTokenURI, tokenId.toString())) : '';
     }
 }

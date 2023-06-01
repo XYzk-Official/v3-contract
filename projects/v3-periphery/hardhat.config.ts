@@ -97,7 +97,18 @@ export default {
     apiKey: process.env.ETHERSCAN_API_KEY || '',
   },
   solidity: {
-    compilers: [DEFAULT_COMPILER_SETTINGS],
+    compilers: [
+      DEFAULT_COMPILER_SETTINGS,
+      {
+        version: '0.4.22',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 99999,
+          },
+        },
+      },
+    ],
     overrides: {
       'contracts/NonfungiblePositionManager.sol': LOW_OPTIMIZER_COMPILER_SETTINGS,
       'contracts/test/MockTimeNonfungiblePositionManager.sol': LOW_OPTIMIZER_COMPILER_SETTINGS,

@@ -44,7 +44,7 @@ contract BeraV3Pool is IBeraV3Pool {
 
     uint128 public immutable override maxLiquidityPerTick;
 
-    uint32  internal constant PROTOCOL_FEE_SP = 65536;
+    uint32 internal constant PROTOCOL_FEE_SP = 65536;
 
     uint256 internal constant PROTOCOL_FEE_DENOMINATOR = 10000;
 
@@ -125,15 +125,14 @@ contract BeraV3Pool is IBeraV3Pool {
         return abi.decode(data, (uint256));
     }
 
-    function snapshotCumulativesInside(int24 tickLower, int24 tickUpper)
+    function snapshotCumulativesInside(
+        int24 tickLower,
+        int24 tickUpper
+    )
         external
         view
         override
-        returns (
-            int56 tickCumulativeInside,
-            uint160 secondsPerLiquidityInsideX128,
-            uint32 secondsInside
-        )
+        returns (int56 tickCumulativeInside, uint160 secondsPerLiquidityInsideX128, uint32 secondsInside)
     {
         checkTicks(tickLower, tickUpper);
 
@@ -200,7 +199,9 @@ contract BeraV3Pool is IBeraV3Pool {
         }
     }
 
-    function observe(uint32[] calldata secondsAgos)
+    function observe(
+        uint32[] calldata secondsAgos
+    )
         external
         view
         override
@@ -217,11 +218,7 @@ contract BeraV3Pool is IBeraV3Pool {
             );
     }
 
-    function increaseObservationCardinalityNext(uint16 observationCardinalityNext)
-        external
-        override
-        lock
-    {
+    function increaseObservationCardinalityNext(uint16 observationCardinalityNext) external override lock {
         uint16 observationCardinalityNextOld = slot0.observationCardinalityNext; // for the event
         uint16 observationCardinalityNextNew = observations.grow(
             observationCardinalityNextOld,
@@ -269,14 +266,9 @@ contract BeraV3Pool is IBeraV3Pool {
         int128 liquidityDelta;
     }
 
-    function _modifyPosition(ModifyPositionParams memory params)
-        private
-        returns (
-            Position.Info storage position,
-            int256 amount0,
-            int256 amount1
-        )
-    {
+    function _modifyPosition(
+        ModifyPositionParams memory params
+    ) private returns (Position.Info storage position, int256 amount0, int256 amount1) {
         checkTicks(params.tickLower, params.tickUpper);
 
         Slot0 memory _slot0 = slot0;
@@ -551,7 +543,7 @@ contract BeraV3Pool is IBeraV3Pool {
         });
 
         if (address(lmPool) != address(0)) {
-          lmPool.accumulateReward(cache.blockTimestamp);
+            lmPool.accumulateReward(cache.blockTimestamp);
         }
 
         bool exactInput = amountSpecified > 0;
@@ -627,7 +619,7 @@ contract BeraV3Pool is IBeraV3Pool {
                     }
 
                     if (address(lmPool) != address(0)) {
-                      lmPool.crossLmTick(step.tickNext, zeroForOne);
+                        lmPool.crossLmTick(step.tickNext, zeroForOne);
                     }
 
                     int128 liquidityNet = ticks.cross(
@@ -704,17 +696,22 @@ contract BeraV3Pool is IBeraV3Pool {
             require(balance1Before.add(uint256(amount1)) <= balance1(), 'IIA');
         }
 
-        emit Swap(msg.sender, recipient, amount0, amount1, state.sqrtPriceX96, state.liquidity, state.tick, protocolFeesToken0, protocolFeesToken1);
+        emit Swap(
+            msg.sender,
+            recipient,
+            amount0,
+            amount1,
+            state.sqrtPriceX96,
+            state.liquidity,
+            state.tick,
+            protocolFeesToken0,
+            protocolFeesToken1
+        );
         slot0.unlocked = true;
     }
 
     /// @inheritdoc IBeraV3PoolActions
-    function flash(
-        address recipient,
-        uint256 amount0,
-        uint256 amount1,
-        bytes calldata data
-    ) external override lock {
+    function flash(address recipient, uint256 amount0, uint256 amount1, bytes calldata data) external override lock {
         uint128 _liquidity = liquidity;
         require(_liquidity > 0, 'L');
 
@@ -758,7 +755,7 @@ contract BeraV3Pool is IBeraV3Pool {
     function setFeeProtocol(uint32 feeProtocol0, uint32 feeProtocol1) external override lock onlyFactoryOrFactoryOwner {
         require(
             (feeProtocol0 == 0 || (feeProtocol0 >= 1000 && feeProtocol0 <= 4000)) &&
-            (feeProtocol1 == 0 || (feeProtocol1 >= 1000 && feeProtocol1 <= 4000))
+                (feeProtocol1 == 0 || (feeProtocol1 >= 1000 && feeProtocol1 <= 4000))
         );
 
         uint32 feeProtocolOld = slot0.feeProtocol;
@@ -790,7 +787,7 @@ contract BeraV3Pool is IBeraV3Pool {
     }
 
     function setLmPool(address _lmPool) external override onlyFactoryOrFactoryOwner {
-      lmPool = IBeraV3LmPool(_lmPool);
-      emit SetLmPoolEvent(address(_lmPool));
+        lmPool = IBeraV3LmPool(_lmPool);
+        emit SetLmPoolEvent(address(_lmPool));
     }
 }

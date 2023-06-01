@@ -1,30 +1,21 @@
 {
-  "name": "@pancakeswap/v3-core",
-  "description": "🥞 Core smart contracts of PancakeSwap V3",
+  "name": "@berasleep/v3-core",
+  "description": "🥞 Core smart contracts of BeraSleep V3",
   "license": "GPL-2.0-or-later",
   "publishConfig": {
     "access": "public"
   },
   "version": "1.0.2",
   "keywords": [
-    "pancakeswap",
     "core",
     "v3"
-  ],
-  "files": [
-    "contracts/interfaces",
-    "contracts/libraries",
-    "artifacts/contracts/PancakeV3Factory.sol/PancakeV3Factory.json",
-    "artifacts/contracts/PancakeV3Pool.sol/PancakeV3Pool.json",
-    "artifacts/contracts/interfaces/**/*.json",
-    "!artifacts/contracts/interfaces/**/*.dbg.json"
   ],
   "engines": {
     "node": ">=10"
   },
   "devDependencies": {
-    "@pancakeswap/common": "*",
-    "@pancakeswap/v3-lm-pool": "*",
+    "@berasleep/common": "*",
+    "@berasleep/v3-lm-pool": "*",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "@nomiclabs/hardhat-waffle": "^2.0.1",

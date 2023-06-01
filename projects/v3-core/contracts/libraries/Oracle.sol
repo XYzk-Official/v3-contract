@@ -26,10 +26,10 @@ library Oracle {
             });
     }
 
-    function initialize(Observation[65535] storage self, uint32 time)
-        internal
-        returns (uint16 cardinality, uint16 cardinalityNext)
-    {
+    function initialize(
+        Observation[65535] storage self,
+        uint32 time
+    ) internal returns (uint16 cardinality, uint16 cardinalityNext) {
         self[0] = Observation({
             blockTimestamp: time,
             tickCumulative: 0,
@@ -62,27 +62,19 @@ library Oracle {
         self[indexUpdated] = transform(last, blockTimestamp, tick, liquidity);
     }
 
-    function grow(
-        Observation[65535] storage self,
-        uint16 current,
-        uint16 next
-    ) internal returns (uint16) {
+    function grow(Observation[65535] storage self, uint16 current, uint16 next) internal returns (uint16) {
         require(current > 0, 'I');
         if (next <= current) return current;
         for (uint16 i = current; i < next; i++) self[i].blockTimestamp = 1;
         return next;
     }
 
-    function lte(
-        uint32 time,
-        uint32 a,
-        uint32 b
-    ) private pure returns (bool) {
+    function lte(uint32 time, uint32 a, uint32 b) private pure returns (bool) {
         // if there hasn't been overflow, no need to adjust
         if (a <= time && b <= time) return a <= b;
 
-        uint256 aAdjusted = a > time ? a : a + 2**32;
-        uint256 bAdjusted = b > time ? b : b + 2**32;
+        uint256 aAdjusted = a > time ? a : a + 2 ** 32;
+        uint256 bAdjusted = b > time ? b : b + 2 ** 32;
 
         return aAdjusted <= bAdjusted;
     }
