@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./libraries/SafeCast.sol";
 import "./interfaces/INonfungiblePositionManager.sol";
 import "./interfaces/INonfungiblePositionManagerStruct.sol";
-import "./interfaces/IPancakeV3Pool.sol";
+import "./interfaces/IBeraV3Pool.sol";
 import "./interfaces/IMasterChefV2.sol";
 import "./interfaces/ILMPool.sol";
 import "./interfaces/ILMPoolDeployer.sol";
@@ -23,7 +23,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     struct PoolInfo {
         uint256 allocPoint;
         // V3 pool address
-        IPancakeV3Pool v3Pool;
+        IBeraV3Pool v3Pool;
         // V3 pool token0 address
         address token0;
         // V3 pool token1 address
@@ -61,8 +61,8 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     /// @notice v3PoolAddressPid[v3PoolAddress] => pid
     mapping(address => uint256) public v3PoolAddressPid;
 
-    /// @notice Address of CAKE contract.
-    IERC20 public immutable CAKE;
+    /// @notice Address of BERA contract.
+    IERC20 public immutable BERA;
 
     /// @notice Address of WETH contract.
     address public immutable WETH;
@@ -87,7 +87,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     uint256 public latestPeriodNumber;
     uint256 public latestPeriodStartTime;
     uint256 public latestPeriodEndTime;
-    uint256 public latestPeriodCakePerSecond;
+    uint256 public latestPeriodBeraPerSecond;
 
     /// @notice Address of the operator.
     address public operatorAddress;
@@ -109,7 +109,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     error ZeroAddress();
     error NotOwnerOrOperator();
     error NoBalance();
-    error NotPancakeNFT();
+    error NotBeraNFT();
     error InvalidNFT();
     error NotOwner();
     error NoLiquidity();
@@ -122,7 +122,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     error InconsistentAmount();
     error InsufficientAmount();
 
-    event AddPool(uint256 indexed pid, uint256 allocPoint, IPancakeV3Pool indexed v3Pool, ILMPool indexed lmPool);
+    event AddPool(uint256 indexed pid, uint256 allocPoint, IBeraV3Pool indexed v3Pool, ILMPool indexed lmPool);
     event SetPool(uint256 indexed pid, uint256 allocPoint);
     event Deposit(
         address indexed from,
@@ -157,7 +157,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
         uint256 indexed periodNumber,
         uint256 oldEndTime,
         uint256 newEndTime,
-        uint256 remainingCake
+        uint256 remainingBera
     );
     event UpdateFarmBoostContract(address indexed farmBoostContract);
     event SetEmergency(bool emergency);
@@ -185,43 +185,43 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
         _;
     }
 
-    /// @param _CAKE The CAKE token contract address.
+    /// @param _BERA The BERA token contract address.
     /// @param _nonfungiblePositionManager the NFT position manager contract address.
-    constructor(IERC20 _CAKE, INonfungiblePositionManager _nonfungiblePositionManager, address _WETH) {
-        CAKE = _CAKE;
+    constructor(IERC20 _BERA, INonfungiblePositionManager _nonfungiblePositionManager, address _WETH) {
+        BERA = _BERA;
         nonfungiblePositionManager = _nonfungiblePositionManager;
         WETH = _WETH;
     }
 
     /// @notice Returns the cake per second , period end time.
     /// @param _pid The pool pid.
-    /// @return cakePerSecond Cake reward per second.
+    /// @return cakePerSecond Bera reward per second.
     /// @return endTime Period end time.
     function getLatestPeriodInfoByPid(uint256 _pid) public view returns (uint256 cakePerSecond, uint256 endTime) {
         if (totalAllocPoint > 0) {
-            cakePerSecond = (latestPeriodCakePerSecond * poolInfo[_pid].allocPoint) / totalAllocPoint;
+            cakePerSecond = (latestPeriodBeraPerSecond * poolInfo[_pid].allocPoint) / totalAllocPoint;
         }
         endTime = latestPeriodEndTime;
     }
 
     /// @notice Returns the cake per second , period end time. This is for liquidity mining pool.
     /// @param _v3Pool Address of the V3 pool.
-    /// @return cakePerSecond Cake reward per second.
+    /// @return cakePerSecond Bera reward per second.
     /// @return endTime Period end time.
     function getLatestPeriodInfo(address _v3Pool) public view returns (uint256 cakePerSecond, uint256 endTime) {
         if (totalAllocPoint > 0) {
             cakePerSecond =
-                (latestPeriodCakePerSecond * poolInfo[v3PoolAddressPid[_v3Pool]].allocPoint) /
+                (latestPeriodBeraPerSecond * poolInfo[v3PoolAddressPid[_v3Pool]].allocPoint) /
                 totalAllocPoint;
         }
         endTime = latestPeriodEndTime;
     }
 
-    /// @notice View function for checking pending CAKE rewards.
+    /// @notice View function for checking pending BERA rewards.
     /// @dev The pending cake amount is based on the last state in LMPool. The actual amount will happen whenever liquidity changes or harvest.
     /// @param _tokenId Token Id of NFT.
     /// @return reward Pending reward.
-    function pendingCake(uint256 _tokenId) external view returns (uint256 reward) {
+    function pendingBera(uint256 _tokenId) external view returns (uint256 reward) {
         UserPositionInfo memory positionInfo = userPositionInfos[_tokenId];
         if (positionInfo.pid != 0) {
             PoolInfo memory pool = poolInfo[positionInfo.pid];
@@ -251,7 +251,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
 
     function setReceiver(address _receiver) external onlyOwner {
         if (_receiver == address(0)) revert ZeroAddress();
-        if (CAKE.allowance(_receiver, address(this)) != type(uint256).max) revert();
+        if (BERA.allowance(_receiver, address(this)) != type(uint256).max) revert();
         receiver = _receiver;
         emit NewReceiver(_receiver);
     }
@@ -267,7 +267,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     /// @param _allocPoint Number of allocation points for the new pool.
     /// @param _v3Pool Address of the V3 pool.
     /// @param _withUpdate Whether call "massUpdatePools" operation.
-    function add(uint256 _allocPoint, IPancakeV3Pool _v3Pool, bool _withUpdate) external onlyOwner {
+    function add(uint256 _allocPoint, IBeraV3Pool _v3Pool, bool _withUpdate) external onlyOwner {
         if (_withUpdate) massUpdatePools();
 
         ILMPool lmPool = LMPoolDeployer.deploy(_v3Pool);
@@ -299,7 +299,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
         emit AddPool(poolLength, _allocPoint, _v3Pool, lmPool);
     }
 
-    /// @notice Update the given pool's CAKE allocation point. Can only be called by the owner.
+    /// @notice Update the given pool's BERA allocation point. Can only be called by the owner.
     /// @param _pid The id of the pool. See `poolInfo`.
     /// @param _allocPoint New number of allocation points for the pool.
     /// @param _withUpdate Whether call "massUpdatePools" operation.
@@ -333,7 +333,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
         uint256 _tokenId,
         bytes calldata
     ) external nonReentrant returns (bytes4) {
-        if (msg.sender != address(nonfungiblePositionManager)) revert NotPancakeNFT();
+        if (msg.sender != address(nonfungiblePositionManager)) revert NotBeraNFT();
         DepositCache memory cache;
         (
             ,
@@ -378,7 +378,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     /// @notice harvest cake from pool.
     /// @param _tokenId Token Id of NFT.
     /// @param _to Address to.
-    /// @return reward Cake reward.
+    /// @return reward Bera reward.
     function harvest(uint256 _tokenId, address _to) external nonReentrant returns (uint256 reward) {
         UserPositionInfo storage positionInfo = userPositionInfos[_tokenId];
         if (positionInfo.user != msg.sender) revert NotOwner();
@@ -420,7 +420,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     /// @notice Withdraw LP tokens from pool.
     /// @param _tokenId Token Id of NFT to deposit.
     /// @param _to Address to which NFT token to withdraw.
-    /// @return reward Cake reward.
+    /// @return reward Bera reward.
     function withdraw(uint256 _tokenId, address _to) external nonReentrant returns (uint256 reward) {
         if (_to == address(this) || _to == address(0)) revert WrongReceiver();
         UserPositionInfo storage positionInfo = userPositionInfos[_tokenId];
@@ -630,7 +630,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     function transferToken(address _token, address _to) internal {
         uint256 balance = IERC20(_token).balanceOf(address(this));
         // Need to reduce cakeAmountBelongToMC.
-        if (_token == address(CAKE)) {
+        if (_token == address(BERA)) {
             unchecked {
                 // In fact balance should always be greater than or equal to cakeAmountBelongToMC, but in order to avoid any unknown issue, we added this check.
                 if (balance >= cakeAmountBelongToMC) {
@@ -674,7 +674,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     function sweepToken(address token, uint256 amountMinimum, address recipient) external nonReentrant {
         uint256 balanceToken = IERC20(token).balanceOf(address(this));
         // Need to reduce cakeAmountBelongToMC.
-        if (token == address(CAKE)) {
+        if (token == address(BERA)) {
             unchecked {
                 // In fact balance should always be greater than or equal to cakeAmountBelongToMC, but in order to avoid any unknown issue, we added this check.
                 if (balanceToken >= cakeAmountBelongToMC) {
@@ -716,7 +716,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
     /// @param _withUpdate Whether call "massUpdatePools" operation.
     function upkeep(uint256 _amount, uint256 _duration, bool _withUpdate) external onlyReceiver {
         // Transfer cake token from receiver.
-        CAKE.safeTransferFrom(receiver, address(this), _amount);
+        BERA.safeTransferFrom(receiver, address(this), _amount);
         // Update cakeAmountBelongToMC
         unchecked {
             cakeAmountBelongToMC += _amount;
@@ -732,16 +732,16 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
         uint256 cakePerSecond;
         uint256 cakeAmount = _amount;
         if (latestPeriodEndTime > currentTime) {
-            uint256 remainingCake = ((latestPeriodEndTime - currentTime) * latestPeriodCakePerSecond) / PRECISION;
-            emit UpdateUpkeepPeriod(latestPeriodNumber, latestPeriodEndTime, currentTime, remainingCake);
-            cakeAmount += remainingCake;
+            uint256 remainingBera = ((latestPeriodEndTime - currentTime) * latestPeriodBeraPerSecond) / PRECISION;
+            emit UpdateUpkeepPeriod(latestPeriodNumber, latestPeriodEndTime, currentTime, remainingBera);
+            cakeAmount += remainingBera;
         }
         cakePerSecond = (cakeAmount * PRECISION) / duration;
         unchecked {
             latestPeriodNumber++;
             latestPeriodStartTime = currentTime + 1;
             latestPeriodEndTime = endTime;
-            latestPeriodCakePerSecond = cakePerSecond;
+            latestPeriodBeraPerSecond = cakePerSecond;
         }
         emit NewUpkeepPeriod(latestPeriodNumber, currentTime + 1, endTime, cakePerSecond, cakeAmount);
     }
@@ -807,12 +807,12 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
         if (!success) revert();
     }
 
-    /// @notice Safe Transfer CAKE.
-    /// @param _to The CAKE receiver address.
-    /// @param _amount Transfer CAKE amounts.
+    /// @notice Safe Transfer BERA.
+    /// @param _to The BERA receiver address.
+    /// @param _amount Transfer BERA amounts.
     function _safeTransfer(address _to, uint256 _amount) internal {
         if (_amount > 0) {
-            uint256 balance = CAKE.balanceOf(address(this));
+            uint256 balance = BERA.balanceOf(address(this));
             if (balance < _amount) {
                 _amount = balance;
             }
@@ -824,7 +824,7 @@ contract MasterChefV3 is INonfungiblePositionManagerStruct, Multicall, Ownable, 
                     cakeAmountBelongToMC = balance - _amount;
                 }
             }
-            CAKE.safeTransfer(_to, _amount);
+            BERA.safeTransfer(_to, _amount);
         }
     }
 
