@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.5.0;
 
-interface IBeraV3PoolState {
+interface IXYzKV3PoolState {
     function slot0()
         external
         view

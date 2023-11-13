@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity =0.7.6;
-import './interfaces/IBeraV3PoolDeployer.sol';
-import './BeraV3Pool.sol';
+import './interfaces/IXYzKV3PoolDeployer.sol';
+import './XYzKV3Pool.sol';
 
-contract BeraV3PoolDeployer is IBeraV3PoolDeployer {
+contract XYzKV3PoolDeployer is IXYzKV3PoolDeployer {
     struct Parameters {
         address factory;
         address token0;
@@ -37,7 +37,7 @@ contract BeraV3PoolDeployer is IBeraV3PoolDeployer {
         int24 tickSpacing
     ) external override onlyFactory returns (address pool) {
         parameters = Parameters({factory: factory, token0: token0, token1: token1, fee: fee, tickSpacing: tickSpacing});
-        pool = address(new BeraV3Pool{salt: keccak256(abi.encode(token0, token1, fee))}());
+        pool = address(new XYzKV3Pool{salt: keccak256(abi.encode(token0, token1, fee))}());
         delete parameters;
     }
 }

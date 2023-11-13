@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity =0.7.6;
 
-import './interfaces/IBeraV3Pool.sol';
+import './interfaces/IXYzKV3Pool.sol';
 import './libraries/LowGasSafeMath.sol';
 import './libraries/SafeCast.sol';
 import './libraries/Tick.sol';
@@ -15,16 +15,16 @@ import './libraries/TickMath.sol';
 import './libraries/LiquidityMath.sol';
 import './libraries/SqrtPriceMath.sol';
 import './libraries/SwapMath.sol';
-import './interfaces/IBeraV3PoolDeployer.sol';
-import './interfaces/IBeraV3Factory.sol';
+import './interfaces/IXYzKV3PoolDeployer.sol';
+import './interfaces/IXYzKV3Factory.sol';
 import './interfaces/IERC20Minimal.sol';
-import './interfaces/callback/IBeraV3MintCallback.sol';
-import './interfaces/callback/IBeraV3SwapCallback.sol';
-import './interfaces/callback/IBeraV3FlashCallback.sol';
+import './interfaces/callback/IXYzKV3MintCallback.sol';
+import './interfaces/callback/IXYzKV3SwapCallback.sol';
+import './interfaces/callback/IXYzKV3FlashCallback.sol';
 
-import '@berasleep/v3-lm-pool/contracts/interfaces/IBeraV3LmPool.sol';
+import '@xyzk/v3-lm-pool/contracts/interfaces/IXYzKV3LmPool.sol';
 
-contract BeraV3Pool is IBeraV3Pool {
+contract XYzKV3Pool is IXYzKV3Pool {
     using LowGasSafeMath for uint256;
     using LowGasSafeMath for int256;
     using SafeCast for uint256;
@@ -75,7 +75,7 @@ contract BeraV3Pool is IBeraV3Pool {
     Oracle.Observation[65535] public override observations;
 
     // liquidity mining
-    IBeraV3LmPool public lmPool;
+    IXYzKV3LmPool public lmPool;
 
     event SetLmPoolEvent(address addr);
 
@@ -87,13 +87,13 @@ contract BeraV3Pool is IBeraV3Pool {
     }
 
     modifier onlyFactoryOrFactoryOwner() {
-        require(msg.sender == factory || msg.sender == IBeraV3Factory(factory).owner());
+        require(msg.sender == factory || msg.sender == IXYzKV3Factory(factory).owner());
         _;
     }
 
     constructor() {
         int24 _tickSpacing;
-        (factory, token0, token1, fee, _tickSpacing) = IBeraV3PoolDeployer(msg.sender).parameters();
+        (factory, token0, token1, fee, _tickSpacing) = IXYzKV3PoolDeployer(msg.sender).parameters();
         tickSpacing = _tickSpacing;
 
         maxLiquidityPerTick = Tick.tickSpacingToMaxLiquidityPerTick(_tickSpacing);
@@ -425,7 +425,7 @@ contract BeraV3Pool is IBeraV3Pool {
         uint256 balance1Before;
         if (amount0 > 0) balance0Before = balance0();
         if (amount1 > 0) balance1Before = balance1();
-        IBeraV3MintCallback(msg.sender).beraV3MintCallback(amount0, amount1, data);
+        IXYzKV3MintCallback(msg.sender).XYzKV3MintCallback(amount0, amount1, data);
         if (amount0 > 0) require(balance0Before.add(amount0) <= balance0(), 'M0');
         if (amount1 > 0) require(balance1Before.add(amount1) <= balance1(), 'M1');
 
@@ -686,13 +686,13 @@ contract BeraV3Pool is IBeraV3Pool {
             if (amount1 < 0) TransferHelper.safeTransfer(token1, recipient, uint256(-amount1));
 
             uint256 balance0Before = balance0();
-            IBeraV3SwapCallback(msg.sender).beraV3SwapCallback(amount0, amount1, data);
+            IXYzKV3SwapCallback(msg.sender).XYzKV3SwapCallback(amount0, amount1, data);
             require(balance0Before.add(uint256(amount0)) <= balance0(), 'IIA');
         } else {
             if (amount0 < 0) TransferHelper.safeTransfer(token0, recipient, uint256(-amount0));
 
             uint256 balance1Before = balance1();
-            IBeraV3SwapCallback(msg.sender).beraV3SwapCallback(amount0, amount1, data);
+            IXYzKV3SwapCallback(msg.sender).XYzKV3SwapCallback(amount0, amount1, data);
             require(balance1Before.add(uint256(amount1)) <= balance1(), 'IIA');
         }
 
@@ -710,7 +710,7 @@ contract BeraV3Pool is IBeraV3Pool {
         slot0.unlocked = true;
     }
 
-    /// @inheritdoc IBeraV3PoolActions
+    /// @inheritdoc IXYzKV3PoolActions
     function flash(address recipient, uint256 amount0, uint256 amount1, bytes calldata data) external override lock {
         uint128 _liquidity = liquidity;
         require(_liquidity > 0, 'L');
@@ -723,7 +723,7 @@ contract BeraV3Pool is IBeraV3Pool {
         if (amount0 > 0) TransferHelper.safeTransfer(token0, recipient, amount0);
         if (amount1 > 0) TransferHelper.safeTransfer(token1, recipient, amount1);
 
-        IBeraV3FlashCallback(msg.sender).beraV3FlashCallback(fee0, fee1, data);
+        IXYzKV3FlashCallback(msg.sender).XYzKV3FlashCallback(fee0, fee1, data);
 
         uint256 balance0After = balance0();
         uint256 balance1After = balance1();
@@ -751,7 +751,7 @@ contract BeraV3Pool is IBeraV3Pool {
         emit Flash(msg.sender, recipient, amount0, amount1, paid0, paid1);
     }
 
-    /// @inheritdoc IBeraV3PoolOwnerActions
+    /// @inheritdoc IXYzKV3PoolOwnerActions
     function setFeeProtocol(uint32 feeProtocol0, uint32 feeProtocol1) external override lock onlyFactoryOrFactoryOwner {
         require(
             (feeProtocol0 == 0 || (feeProtocol0 >= 1000 && feeProtocol0 <= 4000)) &&
@@ -763,7 +763,7 @@ contract BeraV3Pool is IBeraV3Pool {
         emit SetFeeProtocol(feeProtocolOld % PROTOCOL_FEE_SP, feeProtocolOld >> 16, feeProtocol0, feeProtocol1);
     }
 
-    /// @inheritdoc IBeraV3PoolOwnerActions
+    /// @inheritdoc IXYzKV3PoolOwnerActions
     function collectProtocol(
         address recipient,
         uint128 amount0Requested,
@@ -787,7 +787,7 @@ contract BeraV3Pool is IBeraV3Pool {
     }
 
     function setLmPool(address _lmPool) external override onlyFactoryOrFactoryOwner {
-        lmPool = IBeraV3LmPool(_lmPool);
+        lmPool = IXYzKV3LmPool(_lmPool);
         emit SetLmPoolEvent(address(_lmPool));
     }
 }

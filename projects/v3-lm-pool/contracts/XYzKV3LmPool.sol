@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity =0.7.6;
 
-import '@berasleep/v3-core/contracts/libraries/LowGasSafeMath.sol';
-import '@berasleep/v3-core/contracts/libraries/SafeCast.sol';
-import '@berasleep/v3-core/contracts/libraries/FullMath.sol';
-import '@berasleep/v3-core/contracts/libraries/FixedPoint128.sol';
-import '@berasleep/v3-core/contracts/interfaces/IBeraV3Pool.sol';
+import '@xyzk/v3-core/contracts/libraries/LowGasSafeMath.sol';
+import '@xyzk/v3-core/contracts/libraries/SafeCast.sol';
+import '@xyzk/v3-core/contracts/libraries/FullMath.sol';
+import '@xyzk/v3-core/contracts/libraries/FixedPoint128.sol';
+import '@xyzk/v3-core/contracts/interfaces/IXYzKV3Pool.sol';
 
 import './libraries/LmTick.sol';
 
-import './interfaces/IBeraV3LmPool.sol';
+import './interfaces/IXYzKV3LmPool.sol';
 import './interfaces/IMasterChefV3.sol';
 
-contract BeraV3LmPool is IBeraV3LmPool {
+contract XYzKV3LmPool is IXYzKV3LmPool {
     using LowGasSafeMath for uint256;
     using LowGasSafeMath for int256;
     using SafeCast for uint256;
@@ -21,7 +21,7 @@ contract BeraV3LmPool is IBeraV3LmPool {
 
     uint256 public constant REWARD_PRECISION = 1e12;
 
-    IBeraV3Pool public immutable pool;
+    IXYzKV3Pool public immutable pool;
     IMasterChefV3 public immutable masterChef;
 
     uint256 public rewardGrowthGlobalX128;
@@ -48,7 +48,7 @@ contract BeraV3LmPool is IBeraV3LmPool {
     }
 
     constructor(address _pool, address _masterChef, uint32 rewardStartTimestamp) {
-        pool = IBeraV3Pool(_pool);
+        pool = IXYzKV3Pool(_pool);
         masterChef = IMasterChefV3(_masterChef);
         lastRewardTimestamp = rewardStartTimestamp;
     }

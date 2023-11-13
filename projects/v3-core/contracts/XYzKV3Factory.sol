@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity =0.7.6;
 
-import './interfaces/IBeraV3Factory.sol';
-import './interfaces/IBeraV3PoolDeployer.sol';
-import './interfaces/IBeraV3Pool.sol';
+import './interfaces/IXYzKV3Factory.sol';
+import './interfaces/IXYzKV3PoolDeployer.sol';
+import './interfaces/IXYzKV3Pool.sol';
 
-contract BeraV3Factory is IBeraV3Factory {
-    /// @inheritdoc IBeraV3Factory
+contract XYzKV3Factory is IXYzKV3Factory {
+    /// @inheritdoc IXYzKV3Factory
     address public override owner;
 
     address public immutable poolDeployer;
 
-    /// @inheritdoc IBeraV3Factory
+    /// @inheritdoc IXYzKV3Factory
     mapping(uint24 => int24) public override feeAmountTickSpacing;
-    /// @inheritdoc IBeraV3Factory
+    /// @inheritdoc IXYzKV3Factory
     mapping(address => mapping(address => mapping(uint24 => address))) public override getPool;
-    /// @inheritdoc IBeraV3Factory
+    /// @inheritdoc IXYzKV3Factory
     mapping(uint24 => TickSpacingExtraInfo) public override feeAmountTickSpacingExtraInfo;
     mapping(address => bool) private _whiteListAddresses;
 
@@ -54,7 +54,7 @@ contract BeraV3Factory is IBeraV3Factory {
         emit FeeAmountExtraInfoUpdated(10000, false, true);
     }
 
-    /// @inheritdoc IBeraV3Factory
+    /// @inheritdoc IXYzKV3Factory
     function createPool(address tokenA, address tokenB, uint24 fee) external override returns (address pool) {
         require(tokenA != tokenB);
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
@@ -66,19 +66,19 @@ contract BeraV3Factory is IBeraV3Factory {
             require(_whiteListAddresses[msg.sender], 'user should be in the white list for this fee tier');
         }
         require(getPool[token0][token1][fee] == address(0));
-        pool = IBeraV3PoolDeployer(poolDeployer).deploy(address(this), token0, token1, fee, tickSpacing);
+        pool = IXYzKV3PoolDeployer(poolDeployer).deploy(address(this), token0, token1, fee, tickSpacing);
         getPool[token0][token1][fee] = pool;
         getPool[token1][token0][fee] = pool;
         emit PoolCreated(token0, token1, fee, tickSpacing, pool);
     }
 
-    /// @inheritdoc IBeraV3Factory
+    /// @inheritdoc IXYzKV3Factory
     function setOwner(address _owner) external override onlyOwner {
         emit OwnerChanged(owner, _owner);
         owner = _owner;
     }
 
-    /// @inheritdoc IBeraV3Factory
+    /// @inheritdoc IXYzKV3Factory
     function enableFeeAmount(uint24 fee, int24 tickSpacing) public override onlyOwner {
         require(fee < 1000000);
         require(tickSpacing > 0 && tickSpacing < 16384);
@@ -90,7 +90,7 @@ contract BeraV3Factory is IBeraV3Factory {
         emit FeeAmountExtraInfoUpdated(fee, false, true);
     }
 
-    /// @inheritdoc IBeraV3Factory
+    /// @inheritdoc IXYzKV3Factory
     function setWhiteListAddress(address user, bool verified) public override onlyOwner {
         require(_whiteListAddresses[user] != verified, 'state not change');
         _whiteListAddresses[user] = verified;
@@ -98,7 +98,7 @@ contract BeraV3Factory is IBeraV3Factory {
         emit WhiteListAdded(user, verified);
     }
 
-    /// @inheritdoc IBeraV3Factory
+    /// @inheritdoc IXYzKV3Factory
     function setFeeAmountExtraInfo(uint24 fee, bool whitelistRequested, bool enabled) public override onlyOwner {
         require(feeAmountTickSpacing[fee] != 0);
 
@@ -115,7 +115,7 @@ contract BeraV3Factory is IBeraV3Factory {
     }
 
     function setFeeProtocol(address pool, uint32 feeProtocol0, uint32 feeProtocol1) external override onlyOwner {
-        IBeraV3Pool(pool).setFeeProtocol(feeProtocol0, feeProtocol1);
+        IXYzKV3Pool(pool).setFeeProtocol(feeProtocol0, feeProtocol1);
     }
 
     function collectProtocol(
@@ -124,10 +124,10 @@ contract BeraV3Factory is IBeraV3Factory {
         uint128 amount0Requested,
         uint128 amount1Requested
     ) external override onlyOwner returns (uint128 amount0, uint128 amount1) {
-        return IBeraV3Pool(pool).collectProtocol(recipient, amount0Requested, amount1Requested);
+        return IXYzKV3Pool(pool).collectProtocol(recipient, amount0Requested, amount1Requested);
     }
 
     function setLmPool(address pool, address lmPool) external override onlyOwnerOrLmPoolDeployer {
-        IBeraV3Pool(pool).setLmPool(lmPool);
+        IXYzKV3Pool(pool).setLmPool(lmPool);
     }
 }

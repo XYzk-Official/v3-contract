@@ -57,6 +57,12 @@ const ftmTest: NetworkUserConfig = {
   accounts: [process.env.KEY_TESTNET!],
 }
 
+const lineaTest: NetworkUserConfig = {
+  chainId: 59140,
+  url: 'https://rpc.goerli.linea.build/',
+  accounts: [process.env.KEY_TESTNET!],
+}
+
 export default {
   networks: {
     hardhat: {
@@ -67,7 +73,7 @@ export default {
     ...(process.env.KEY_GOERLI && { goerli }),
     ...(process.env.KEY_ETH && { eth }),
     // mainnet: bscMainnet,
-    testnet: ftmTest,
+    testnet: lineaTest,
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
