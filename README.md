@@ -1,1 +1,1 @@
-# BeraSleep smart contracts V3
+# XYZK V3 smart contracts
