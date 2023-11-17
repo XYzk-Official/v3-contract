@@ -2,9 +2,9 @@
 pragma solidity =0.7.6;
 pragma abicoder v2;
 
-import '@pancakeswap/v3-core/contracts/interfaces/IPancakeV3Factory.sol';
-import '@pancakeswap/v3-core/contracts/interfaces/callback/IPancakeV3MintCallback.sol';
-import '@pancakeswap/v3-core/contracts/libraries/TickMath.sol';
+import '@xyzk/v3-core/contracts/interfaces/IXYzKV3Factory.sol';
+import '@xyzk/v3-core/contracts/interfaces/callback/IXYzKV3MintCallback.sol';
+import '@xyzk/v3-core/contracts/libraries/TickMath.sol';
 
 import '../libraries/PoolAddress.sol';
 import '../libraries/CallbackValidation.sol';
@@ -14,15 +14,15 @@ import './PeripheryPayments.sol';
 import './PeripheryImmutableState.sol';
 
 /// @title Liquidity management functions
-/// @notice Internal functions for safely managing liquidity in PancakeSwap V3
-abstract contract LiquidityManagement is IPancakeV3MintCallback, PeripheryImmutableState, PeripheryPayments {
+/// @notice Internal functions for safely managing liquidity in XYzKSwap V3
+abstract contract LiquidityManagement is IXYzKV3MintCallback, PeripheryImmutableState, PeripheryPayments {
     struct MintCallbackData {
         PoolAddress.PoolKey poolKey;
         address payer;
     }
 
-    /// @inheritdoc IPancakeV3MintCallback
-    function pancakeV3MintCallback(uint256 amount0Owed, uint256 amount1Owed, bytes calldata data) external override {
+    /// @inheritdoc IXYzKV3MintCallback
+    function xyzkV3MintCallback(uint256 amount0Owed, uint256 amount1Owed, bytes calldata data) external override {
         MintCallbackData memory decoded = abi.decode(data, (MintCallbackData));
         CallbackValidation.verifyCallback(deployer, decoded.poolKey);
 
@@ -46,14 +46,14 @@ abstract contract LiquidityManagement is IPancakeV3MintCallback, PeripheryImmuta
     /// @notice Add liquidity to an initialized pool
     function addLiquidity(
         AddLiquidityParams memory params
-    ) internal returns (uint128 liquidity, uint256 amount0, uint256 amount1, IPancakeV3Pool pool) {
+    ) internal returns (uint128 liquidity, uint256 amount0, uint256 amount1, IXYzKV3Pool pool) {
         PoolAddress.PoolKey memory poolKey = PoolAddress.PoolKey({
             token0: params.token0,
             token1: params.token1,
             fee: params.fee
         });
 
-        pool = IPancakeV3Pool(PoolAddress.computeAddress(deployer, poolKey));
+        pool = IXYzKV3Pool(PoolAddress.computeAddress(deployer, poolKey));
 
         // compute the liquidity amount
         {

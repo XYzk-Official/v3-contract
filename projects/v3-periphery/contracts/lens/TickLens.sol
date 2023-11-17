@@ -2,7 +2,7 @@
 pragma solidity >=0.5.0;
 pragma abicoder v2;
 
-import '@pancakeswap/v3-core/contracts/interfaces/IPancakeV3Pool.sol';
+import '@xyzk/v3-core/contracts/interfaces/IXYzKV3Pool.sol';
 
 import '../interfaces/ITickLens.sol';
 
@@ -14,7 +14,7 @@ contract TickLens is ITickLens {
         int16 tickBitmapIndex
     ) public view override returns (PopulatedTick[] memory populatedTicks) {
         // fetch bitmap
-        uint256 bitmap = IPancakeV3Pool(pool).tickBitmap(tickBitmapIndex);
+        uint256 bitmap = IXYzKV3Pool(pool).tickBitmap(tickBitmapIndex);
 
         // calculate the number of populated ticks
         uint256 numberOfPopulatedTicks;
@@ -23,12 +23,12 @@ contract TickLens is ITickLens {
         }
 
         // fetch populated tick data
-        int24 tickSpacing = IPancakeV3Pool(pool).tickSpacing();
+        int24 tickSpacing = IXYzKV3Pool(pool).tickSpacing();
         populatedTicks = new PopulatedTick[](numberOfPopulatedTicks);
         for (uint256 i = 0; i < 256; i++) {
             if (bitmap & (1 << i) > 0) {
                 int24 populatedTick = ((int24(tickBitmapIndex) << 8) + int24(i)) * tickSpacing;
-                (uint128 liquidityGross, int128 liquidityNet, , , , , , ) = IPancakeV3Pool(pool).ticks(populatedTick);
+                (uint128 liquidityGross, int128 liquidityNet, , , , , , ) = IXYzKV3Pool(pool).ticks(populatedTick);
                 populatedTicks[--numberOfPopulatedTicks] = PopulatedTick({
                     tick: populatedTick,
                     liquidityNet: liquidityNet,

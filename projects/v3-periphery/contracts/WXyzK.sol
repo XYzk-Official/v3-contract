@@ -1,8 +1,8 @@
 pragma solidity ^0.4.22;
 
-contract WBERA {
-    string public name = 'Wrapped BERA';
-    string public symbol = 'WBERA';
+contract WXYzK {
+    string public name = 'Wrapped XYzK';
+    string public symbol = 'WXYzK';
     uint8 public decimals = 18;
 
     event Approval(address indexed src, address indexed guy, uint wad);

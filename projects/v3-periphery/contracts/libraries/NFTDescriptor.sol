@@ -2,10 +2,10 @@
 pragma solidity >=0.7.0;
 pragma abicoder v2;
 
-import '@berasleep/v3-core/contracts/interfaces/IBeraV3Pool.sol';
-import '@berasleep/v3-core/contracts/libraries/TickMath.sol';
-import '@berasleep/v3-core/contracts/libraries/BitMath.sol';
-import '@berasleep/v3-core/contracts/libraries/FullMath.sol';
+import '@xyzk/v3-core/contracts/interfaces/IXYzKV3Pool.sol';
+import '@xyzk/v3-core/contracts/libraries/TickMath.sol';
+import '@xyzk/v3-core/contracts/libraries/BitMath.sol';
+import '@xyzk/v3-core/contracts/libraries/FullMath.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
 import '@openzeppelin/contracts/math/SafeMath.sol';
 import '@openzeppelin/contracts/math/SignedSafeMath.sol';
@@ -110,7 +110,7 @@ library NFTDescriptor {
         return
             string(
                 abi.encodePacked(
-                    'This NFT represents a liquidity position in a PancakeSwap V3 ',
+                    'This NFT represents a liquidity position in a XYzKSwap V3 ',
                     quoteTokenSymbol,
                     '-',
                     baseTokenSymbol,
@@ -157,7 +157,7 @@ library NFTDescriptor {
         return
             string(
                 abi.encodePacked(
-                    'Pancake - ',
+                    'XYzK - ',
                     feeTier,
                     ' - ',
                     escapeQuotes(params.quoteTokenSymbol),

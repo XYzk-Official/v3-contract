@@ -2,9 +2,9 @@
 pragma solidity =0.7.6;
 pragma abicoder v2;
 
-import '@pancakeswap/v3-core/contracts/libraries/SafeCast.sol';
-import '@pancakeswap/v3-core/contracts/libraries/TickMath.sol';
-import '@pancakeswap/v3-core/contracts/interfaces/IPancakeV3Pool.sol';
+import '@xyzk/v3-core/contracts/libraries/SafeCast.sol';
+import '@xyzk/v3-core/contracts/libraries/TickMath.sol';
+import '@xyzk/v3-core/contracts/interfaces/IXYzKV3Pool.sol';
 
 import './interfaces/ISwapRouter.sol';
 import './base/PeripheryImmutableState.sol';
@@ -17,8 +17,8 @@ import './libraries/PoolAddress.sol';
 import './libraries/CallbackValidation.sol';
 import './interfaces/external/IWETH9.sol';
 
-/// @title Pancake V3 Swap Router
-/// @notice Router for stateless execution of swaps against Pancake V3
+/// @title XYzK V3 Swap Router
+/// @notice Router for stateless execution of swaps against XYzK V3
 contract SwapRouter is
     ISwapRouter,
     PeripheryImmutableState,
@@ -44,8 +44,8 @@ contract SwapRouter is
     ) PeripheryImmutableState(_deployer, _factory, _WETH9) {}
 
     /// @dev Returns the pool for the given token pair and fee. The pool contract may or may not exist.
-    function getPool(address tokenA, address tokenB, uint24 fee) private view returns (IPancakeV3Pool) {
-        return IPancakeV3Pool(PoolAddress.computeAddress(deployer, PoolAddress.getPoolKey(tokenA, tokenB, fee)));
+    function getPool(address tokenA, address tokenB, uint24 fee) private view returns (IXYzKV3Pool) {
+        return IXYzKV3Pool(PoolAddress.computeAddress(deployer, PoolAddress.getPoolKey(tokenA, tokenB, fee)));
     }
 
     struct SwapCallbackData {
@@ -53,8 +53,8 @@ contract SwapRouter is
         address payer;
     }
 
-    /// @inheritdoc IPancakeV3SwapCallback
-    function pancakeV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes calldata _data) external override {
+    /// @inheritdoc IXYzKV3SwapCallback
+    function xyzkV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes calldata _data) external override {
         require(amount0Delta > 0 || amount1Delta > 0); // swaps entirely within 0-liquidity regions are not supported
         SwapCallbackData memory data = abi.decode(_data, (SwapCallbackData));
         (address tokenIn, address tokenOut, uint24 fee) = data.path.decodeFirstPool();
