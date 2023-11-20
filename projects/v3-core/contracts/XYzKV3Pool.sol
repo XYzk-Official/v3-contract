@@ -425,7 +425,7 @@ contract XYzKV3Pool is IXYzKV3Pool {
         uint256 balance1Before;
         if (amount0 > 0) balance0Before = balance0();
         if (amount1 > 0) balance1Before = balance1();
-        IXYzKV3MintCallback(msg.sender).XYzKV3MintCallback(amount0, amount1, data);
+        IXYzKV3MintCallback(msg.sender).xyzkV3MintCallback(amount0, amount1, data);
         if (amount0 > 0) require(balance0Before.add(amount0) <= balance0(), 'M0');
         if (amount1 > 0) require(balance1Before.add(amount1) <= balance1(), 'M1');
 
@@ -686,13 +686,13 @@ contract XYzKV3Pool is IXYzKV3Pool {
             if (amount1 < 0) TransferHelper.safeTransfer(token1, recipient, uint256(-amount1));
 
             uint256 balance0Before = balance0();
-            IXYzKV3SwapCallback(msg.sender).XYzKV3SwapCallback(amount0, amount1, data);
+            IXYzKV3SwapCallback(msg.sender).xyzkV3SwapCallback(amount0, amount1, data);
             require(balance0Before.add(uint256(amount0)) <= balance0(), 'IIA');
         } else {
             if (amount0 < 0) TransferHelper.safeTransfer(token0, recipient, uint256(-amount0));
 
             uint256 balance1Before = balance1();
-            IXYzKV3SwapCallback(msg.sender).XYzKV3SwapCallback(amount0, amount1, data);
+            IXYzKV3SwapCallback(msg.sender).xyzkV3SwapCallback(amount0, amount1, data);
             require(balance1Before.add(uint256(amount1)) <= balance1(), 'IIA');
         }
 
@@ -723,7 +723,7 @@ contract XYzKV3Pool is IXYzKV3Pool {
         if (amount0 > 0) TransferHelper.safeTransfer(token0, recipient, amount0);
         if (amount1 > 0) TransferHelper.safeTransfer(token1, recipient, amount1);
 
-        IXYzKV3FlashCallback(msg.sender).XYzKV3FlashCallback(fee0, fee1, data);
+        IXYzKV3FlashCallback(msg.sender).xyzkV3FlashCallback(fee0, fee1, data);
 
         uint256 balance0After = balance0();
         uint256 balance1After = balance1();

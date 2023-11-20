@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity =0.7.6;
 
-import '@xyzk/v3-core/contracts/interfaces/IPancakeV3Factory.sol';
+import '@xyzk/v3-core/contracts/interfaces/IXYzKV3Factory.sol';
 import '@xyzk/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol';
 
 import './XYzKV3LmPool.sol';
@@ -23,10 +23,10 @@ contract XYzKV3LmPoolDeployer {
     }
 
     /// @dev Deploys a LmPool
-    /// @param pool The contract address of the PancakeSwap V3 pool
+    /// @param pool The contract address of the XYzKSwap V3 pool
     function deploy(IXYzKV3Pool pool) external onlyMasterChef returns (IXYzKV3LmPool lmPool) {
         lmPool = new XYzKV3LmPool(address(pool), masterChef, uint32(block.timestamp));
-        IPancakeV3Factory(INonfungiblePositionManager(IMasterChefV3(masterChef).nonfungiblePositionManager()).factory())
+        IXYzKV3Factory(INonfungiblePositionManager(IMasterChefV3(masterChef).nonfungiblePositionManager()).factory())
             .setLmPool(address(pool), address(lmPool));
     }
 }
