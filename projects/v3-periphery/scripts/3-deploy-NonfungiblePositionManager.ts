@@ -12,10 +12,10 @@ const artifacts: { [name: string]: ContractJson } = {
 const main = async () => {
   const { name } = network
   const [owner] = await ethers.getSigners()
-  const beraV3PoolDeployerAddress = '0x4fec5eFc5644C04d8131623a3C0f91850D6b9a49'
-  const beraV3FactoryAddress = '0x5774AC0d203B95b3988A2a939e3611C5C3082e36'
-  const WBERA = '0x11DC191B1D664fcE05565A456C80aE81AB4914e9'
-  const nonfungibleTokenPositionDescriptor = '0x99CA5A05948468da7218768250afE637bFc0Bd9c'
+  const xyzkV3PoolDeployerAddress = '0x012684dbd63cCB0C66dCeD294CA72e7d45704D53'
+  const xyzkV3FactoryAddress = '0x682f2407856Ee3fDfd4eA1636c978532Eb05584F'
+  const WXYZK = '0xEB9Ee513943FcaeC858B74441B5A4205380b9560'
+  const nonfungibleTokenPositionDescriptor = '0xe482A4d614aef5963f4C87C3bB47Db0B31595486'
 
   const NonfungiblePositionManager = new ContractFactory(
     artifacts.NonfungiblePositionManager.abi,
@@ -24,9 +24,9 @@ const main = async () => {
   )
 
   const nonfungiblePositionManager = await NonfungiblePositionManager.deploy(
-    beraV3PoolDeployerAddress,
-    beraV3FactoryAddress,
-    WBERA,
+    xyzkV3PoolDeployerAddress,
+    xyzkV3FactoryAddress,
+    WXYZK,
     nonfungibleTokenPositionDescriptor
   )
   console.log('nonfungiblePositionManager', nonfungiblePositionManager.address)
