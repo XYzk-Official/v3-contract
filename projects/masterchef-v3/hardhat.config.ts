@@ -20,13 +20,19 @@ const ftmTest: NetworkUserConfig = {
   accounts: [process.env.KEY_TESTNET!],
 };
 
+const lineaTest: NetworkUserConfig = {
+  chainId: 59140,
+  url: "https://rpc.goerli.linea.build",
+  accounts: [process.env.KEY_TESTNET!],
+};
+
 const config = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
     // testnet: bscTestnet,
     // mainnet: bscMainnet,
-    testnet: ftmTest,
+    testnet: lineaTest,
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,

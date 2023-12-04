@@ -9,11 +9,11 @@ async function main() {
 
   // Compile contracts.
 
-  const nonfungiblePositionManagerAddress = "0x84b27c0720c51f68F8A93de7862D361263b10711";
-  const beraToken = "0xC938173CccA0f3C917A0dC799B3dbEF89626fE2B";
-  const WBera = "0x11DC191B1D664fcE05565A456C80aE81AB4914e9";
+  const nonfungiblePositionManagerAddress = "0xA2ABA85196e3F7FFDD6e6802b12049d67ceE58bA";
+  const xyzkToken = "0x707dc1041dc702a83F7a0af57dDe1a3cdAC9643e";
+  const WXYzK = "0xEB9Ee513943FcaeC858B74441B5A4205380b9560";
   const MasterChefV3 = await ethers.getContractFactory("MasterChefV3");
-  const masterChefV3 = await MasterChefV3.deploy(beraToken, nonfungiblePositionManagerAddress, WBera);
+  const masterChefV3 = await MasterChefV3.deploy(xyzkToken, nonfungiblePositionManagerAddress, WXYzK);
 
   console.log("masterChefV3 deployed to:", masterChefV3.address);
 }
