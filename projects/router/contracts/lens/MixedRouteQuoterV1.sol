@@ -2,13 +2,13 @@
 pragma solidity =0.7.6;
 pragma abicoder v2;
 
-import '@pancakeswap/v3-periphery/contracts/base/PeripheryImmutableState.sol';
-import '@pancakeswap/v3-core/contracts/libraries/SafeCast.sol';
-import '@pancakeswap/v3-core/contracts/libraries/TickMath.sol';
-import '@pancakeswap/v3-core/contracts/libraries/TickBitmap.sol';
-import '@pancakeswap/v3-core/contracts/interfaces/IPancakeV3Pool.sol';
-import '@pancakeswap/v3-core/contracts/interfaces/callback/IPancakeV3SwapCallback.sol';
-import '@pancakeswap/v3-periphery/contracts/libraries/Path.sol';
+import '@xyzk/v3-periphery/contracts/base/PeripheryImmutableState.sol';
+import '@xyzk/v3-core/contracts/libraries/SafeCast.sol';
+import '@xyzk/v3-core/contracts/libraries/TickMath.sol';
+import '@xyzk/v3-core/contracts/libraries/TickBitmap.sol';
+import '@xyzk/v3-core/contracts/interfaces/IXYzKV3Pool.sol';
+import '@xyzk/v3-core/contracts/interfaces/callback/IXYzKV3SwapCallback.sol';
+import '@xyzk/v3-periphery/contracts/libraries/Path.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
 
 import '../base/ImmutableState.sol';
@@ -22,10 +22,10 @@ import '../libraries/SmartRouterHelper.sol';
 /// @notice Does not support exact output swaps since using the contract balance between exactOut swaps is not supported
 /// @dev These functions are not gas efficient and should _not_ be called on chain. Instead, optimistically execute
 /// the swap and check the amounts in the callback.
-contract MixedRouteQuoterV1 is IMixedRouteQuoterV1, IPancakeV3SwapCallback, PeripheryImmutableState {
+contract MixedRouteQuoterV1 is IMixedRouteQuoterV1, IXYzKV3SwapCallback, PeripheryImmutableState {
     using Path for bytes;
     using SafeCast for uint256;
-    using PoolTicksCounter for IPancakeV3Pool;
+    using PoolTicksCounter for IXYzKV3Pool;
 
     address public immutable factoryV2;
     address public immutable factoryStable;
@@ -53,8 +53,8 @@ contract MixedRouteQuoterV1 is IMixedRouteQuoterV1, IPancakeV3SwapCallback, Peri
 
     /************************************************** V3 **************************************************/
 
-    /// @inheritdoc IPancakeV3SwapCallback
-    function pancakeV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes memory path) external view override {
+    /// @inheritdoc IXYzKV3SwapCallback
+    function xyzkV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes memory path) external view override {
         require(amount0Delta > 0 || amount1Delta > 0); // swaps entirely within 0-liquidity regions are not supported
         (address tokenIn, address tokenOut, uint24 fee) = path.decodeFirstPool();
         SmartRouterHelper.verifyCallback(deployer, tokenIn, tokenOut, fee);
@@ -63,7 +63,7 @@ contract MixedRouteQuoterV1 is IMixedRouteQuoterV1, IPancakeV3SwapCallback, Peri
             ? (tokenIn < tokenOut, uint256(-amount1Delta))
             : (tokenOut < tokenIn, uint256(-amount0Delta));
 
-        IPancakeV3Pool pool = SmartRouterHelper.getPool(deployer, tokenIn, tokenOut, fee);
+        IXYzKV3Pool pool = SmartRouterHelper.getPool(deployer, tokenIn, tokenOut, fee);
         (uint160 v3SqrtPriceX96After, int24 tickAfter, , , , , ) = pool.slot0();
 
         if (isExactInput) {
@@ -96,7 +96,7 @@ contract MixedRouteQuoterV1 is IMixedRouteQuoterV1, IPancakeV3SwapCallback, Peri
 
     function handleV3Revert(
         bytes memory reason,
-        IPancakeV3Pool pool,
+        IXYzKV3Pool pool,
         uint256 gasEstimate
     ) private view returns (uint256 amount, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256) {
         int24 tickBefore;
@@ -118,7 +118,7 @@ contract MixedRouteQuoterV1 is IMixedRouteQuoterV1, IPancakeV3SwapCallback, Peri
         returns (uint256 amountOut, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)
     {
         bool zeroForOne = params.tokenIn < params.tokenOut;
-        IPancakeV3Pool pool = SmartRouterHelper.getPool(deployer, params.tokenIn, params.tokenOut, params.fee);
+        IXYzKV3Pool pool = SmartRouterHelper.getPool(deployer, params.tokenIn, params.tokenOut, params.fee);
 
         uint256 gasBefore = gasleft();
         try

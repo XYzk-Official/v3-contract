@@ -2,13 +2,13 @@
 pragma solidity =0.7.6;
 pragma abicoder v2;
 
-import '@pancakeswap/v3-periphery/contracts/base/PeripheryImmutableState.sol';
-import '@pancakeswap/v3-core/contracts/libraries/SafeCast.sol';
-import '@pancakeswap/v3-core/contracts/libraries/TickMath.sol';
-import '@pancakeswap/v3-core/contracts/libraries/TickBitmap.sol';
-import '@pancakeswap/v3-core/contracts/interfaces/IPancakeV3Pool.sol';
-import '@pancakeswap/v3-core/contracts/interfaces/callback/IPancakeV3SwapCallback.sol';
-import '@pancakeswap/v3-periphery/contracts/libraries/Path.sol';
+import '@xyzk/v3-periphery/contracts/base/PeripheryImmutableState.sol';
+import '@xyzk/v3-core/contracts/libraries/SafeCast.sol';
+import '@xyzk/v3-core/contracts/libraries/TickMath.sol';
+import '@xyzk/v3-core/contracts/libraries/TickBitmap.sol';
+import '@xyzk/v3-core/contracts/interfaces/IXYzKV3Pool.sol';
+import '@xyzk/v3-core/contracts/interfaces/callback/IXYzKV3SwapCallback.sol';
+import '@xyzk/v3-periphery/contracts/libraries/Path.sol';
 
 import '../interfaces/IQuoterV2.sol';
 import '../libraries/PoolTicksCounter.sol';
@@ -18,10 +18,10 @@ import '../libraries/SmartRouterHelper.sol';
 /// @notice Allows getting the expected amount out or amount in for a given swap without executing the swap
 /// @dev These functions are not gas efficient and should _not_ be called on chain. Instead, optimistically execute
 /// the swap and check the amounts in the callback.
-contract QuoterV2 is IQuoterV2, IPancakeV3SwapCallback, PeripheryImmutableState {
+contract QuoterV2 is IQuoterV2, IXYzKV3SwapCallback, PeripheryImmutableState {
     using Path for bytes;
     using SafeCast for uint256;
-    using PoolTicksCounter for IPancakeV3Pool;
+    using PoolTicksCounter for IXYzKV3Pool;
 
     /// @dev Transient storage variable used to check a safety condition in exact output swaps.
     uint256 private amountOutCached;
@@ -32,8 +32,8 @@ contract QuoterV2 is IQuoterV2, IPancakeV3SwapCallback, PeripheryImmutableState 
         address _WETH9
     ) PeripheryImmutableState(_deployer, _factory, _WETH9) {}
 
-    /// @inheritdoc IPancakeV3SwapCallback
-    function pancakeV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes memory path) external view override {
+    /// @inheritdoc IXYzKV3SwapCallback
+    function xyzkV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes memory path) external view override {
         require(amount0Delta > 0 || amount1Delta > 0); // swaps entirely within 0-liquidity regions are not supported
         (address tokenIn, address tokenOut, uint24 fee) = path.decodeFirstPool();
         SmartRouterHelper.verifyCallback(deployer, tokenIn, tokenOut, fee);
@@ -42,7 +42,7 @@ contract QuoterV2 is IQuoterV2, IPancakeV3SwapCallback, PeripheryImmutableState 
             ? (tokenIn < tokenOut, uint256(amount0Delta), uint256(-amount1Delta))
             : (tokenOut < tokenIn, uint256(amount1Delta), uint256(-amount0Delta));
 
-        IPancakeV3Pool pool = SmartRouterHelper.getPool(deployer, tokenIn, tokenOut, fee);
+        IXYzKV3Pool pool = SmartRouterHelper.getPool(deployer, tokenIn, tokenOut, fee);
         (uint160 sqrtPriceX96After, int24 tickAfter, , , , , ) = pool.slot0();
 
         if (isExactInput) {
@@ -82,7 +82,7 @@ contract QuoterV2 is IQuoterV2, IPancakeV3SwapCallback, PeripheryImmutableState 
 
     function handleRevert(
         bytes memory reason,
-        IPancakeV3Pool pool,
+        IXYzKV3Pool pool,
         uint256 gasEstimate
     ) private view returns (uint256 amount, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256) {
         int24 tickBefore;
@@ -103,7 +103,7 @@ contract QuoterV2 is IQuoterV2, IPancakeV3SwapCallback, PeripheryImmutableState 
         returns (uint256 amountOut, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)
     {
         bool zeroForOne = params.tokenIn < params.tokenOut;
-        IPancakeV3Pool pool = SmartRouterHelper.getPool(deployer, params.tokenIn, params.tokenOut, params.fee);
+        IXYzKV3Pool pool = SmartRouterHelper.getPool(deployer, params.tokenIn, params.tokenOut, params.fee);
 
         uint256 gasBefore = gasleft();
         try
@@ -181,7 +181,7 @@ contract QuoterV2 is IQuoterV2, IPancakeV3SwapCallback, PeripheryImmutableState 
         returns (uint256 amountIn, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)
     {
         bool zeroForOne = params.tokenIn < params.tokenOut;
-        IPancakeV3Pool pool = SmartRouterHelper.getPool(deployer, params.tokenIn, params.tokenOut, params.fee);
+        IXYzKV3Pool pool = SmartRouterHelper.getPool(deployer, params.tokenIn, params.tokenOut, params.fee);
 
         // if no price limit has been specified, cache the output amount for comparison in the swap callback
         if (params.sqrtPriceLimitX96 == 0) amountOutCached = params.amount;

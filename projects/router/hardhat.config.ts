@@ -52,6 +52,12 @@ const eth: NetworkUserConfig = {
   accounts: [process.env.KEY_ETH!],
 }
 
+const lineaTest: NetworkUserConfig = {
+  chainId: 59140,
+  url: 'https://rpc.goerli.linea.build',
+  accounts: [process.env.KEY_TESTNET!],
+}
+
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
@@ -60,6 +66,7 @@ const config: HardhatUserConfig = {
         url: bscTestnet.url || '',
       },
     },
+    testnet: lineaTest,
     ...(process.env.KEY_TESTNET && { bscTestnet }),
     ...(process.env.KEY_MAINNET && { bscMainnet }),
     ...(process.env.KEY_GOERLI && { goerli }),
@@ -119,19 +126,19 @@ const config: HardhatUserConfig = {
       },
     ],
     overrides: {
-      '@pancakeswap/v3-core/contracts/libraries/FullMath.sol': {
+      '@xyzk/v3-core/contracts/libraries/FullMath.sol': {
         version: '0.7.6',
         settings: {},
       },
-      '@pancakeswap/v3-core/contracts/libraries/TickBitmap.sol': {
+      '@xyzk/v3-core/contracts/libraries/TickBitmap.sol': {
         version: '0.7.6',
         settings: {},
       },
-      '@pancakeswap/v3-core/contracts/libraries/TickMath.sol': {
+      '@xyzk/v3-core/contracts/libraries/TickMath.sol': {
         version: '0.7.6',
         settings: {},
       },
-      '@pancakeswap/v3-periphery/contracts/libraries/PoolAddress.sol': {
+      '@xyzk/v3-periphery/contracts/libraries/PoolAddress.sol': {
         version: '0.7.6',
         settings: {},
       },
