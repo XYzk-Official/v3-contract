@@ -28,6 +28,20 @@ require('dotenv').config({ path: require('find-config')('.env') })
 //   // accounts: [process.env.KEY_MAINNET!],
 // }
 
+const LOWEST_OPTIMIZER_COMPILER_SETTINGS = {
+  version: '0.7.6',
+  settings: {
+    evmVersion: 'istanbul',
+    optimizer: {
+      enabled: true,
+      runs: 80,
+    },
+    metadata: {
+      bytecodeHash: 'none',
+    },
+  },
+}
+
 const bscTestnet: NetworkUserConfig = {
   url: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
   chainId: 97,
@@ -146,6 +160,7 @@ const config: HardhatUserConfig = {
         version: '0.7.6',
         settings: {},
       },
+      'contracts/UniswapV3Factory.sol': LOWEST_OPTIMIZER_COMPILER_SETTINGS,
     },
   },
   paths: {

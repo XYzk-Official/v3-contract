@@ -1,15 +1,18 @@
 export default {
   factoryV2: {
+    //PancakeFactory
     hardhat: '0x6725f303b657a9451d8ba641348b6761a6cc7a17',
     bscTestnet: '0x6725f303b657a9451d8ba641348b6761a6cc7a17',
     goerli: '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362',
   },
   factoryV3: {
+    //UniswapV3Factory
     hardhat: '0x6725f303b657a9451d8ba641348b6761a6cc7a17',
     bscTestnet: '0xB46d40a16E949270B44940B0482F1b0951a67046',
     goerli: '0x6e906fC1d75c9559E4E8b0F1Fa002C4a9724988f',
   },
   positionManager: {
+    // NonfungiblePositionManager
     hardhat: '0x6725f303b657a9451d8ba641348b6761a6cc7a17',
     bscTestnet: '0x8F78BECb5DECc1C083BfC3B182ec09c844a68532',
     goerli: '0x09C65bC891bf39DAF771e85F2203B898402fF3CF',
