@@ -42,6 +42,20 @@ const LOWEST_OPTIMIZER_COMPILER_SETTINGS = {
   },
 }
 
+const NEW_OPTIMIZER_COMPILER_SETTINGS = {
+  version: '0.8.10',
+  settings: {
+    evmVersion: 'default',
+    optimizer: {
+      enabled: true,
+      runs: 100,
+    },
+    metadata: {
+      bytecodeHash: 'none',
+    },
+  },
+}
+
 const bscTestnet: NetworkUserConfig = {
   url: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
   chainId: 97,
